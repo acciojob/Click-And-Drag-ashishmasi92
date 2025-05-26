@@ -1,51 +1,32 @@
-//Your code goes here 
-let allNumber = document.querySelectorAll(".item")
-let count = 0
-for (let t of allNumber) {
-    count++
-    t.draggable = "true"
-    t.id = "bh" + count
-    t.addEventListener("dragstart", (e) => {
-        let val = e.target.id
+const items = document.querySelectorAll(".item");
+let draggedItem = null;
 
-        e.dataTransfer.setData("text/plain", val)
-        e.target.style.opacity = "0.5"
-        console.log("start");
+items.forEach((item, index) => {
+    item.draggable = true;
+    item.id = `item-${index}`;
 
+    item.addEventListener("dragstart", (e) => {
+        draggedItem = e.target;
+        e.dataTransfer.setData("text/plain", e.target.id);
+        e.target.style.opacity = "0.5";
+    });
 
-    })
-    t.addEventListener("dragend", (e) => {
-        console.log("end");
-        e.target.style.opacity = "1"
-    })
+    item.addEventListener("dragend", (e) => {
+        e.target.style.opacity = "1";
+    });
 
-    let arr = ["dragover", "dragenter", "drop"]
+    item.addEventListener("dragover", (e) => {
+        e.preventDefault(); // Allow drop
+    });
 
+    item.addEventListener("drop", (e) => {
+        e.preventDefault();
 
-    arr.forEach((val) => {
-
-        for (let t of allNumber) {
-            t.addEventListener(val, (e) => {
-                e.preventDefault()
-                if (val === "drop") {
-
-
-                    let tag = e.dataTransfer.getData("text")
-                    let getTag = document.getElementById(tag)
-                    e.target.id = tag;
-                    getTag.id = e.target.id
-                    let text1 = getTag.innerHTML;
-                    let text2 = t.innerHTML
-                    t.innerHTML = text1
-                    getTag.innerHTML = text2
-
-
-
-
-
-                }
-
-            })
+        if (draggedItem && draggedItem !== e.target) {
+            const temp = e.target.innerHTML;
+            e.target.innerHTML = draggedItem.innerHTML;
+            draggedItem.innerHTML = temp;
         }
-    })
-}
+    });
+});
+
